@@ -15,27 +15,60 @@ class BM extends React.Component{
 class BMForm extends React.Component{
   render(){
     return(
-      /*
-      <label>Link<input placeholder='' ref={
-        (input) => this._link=input
-        }></label>
-      <label>Description<input placeholder=''
-      ref={()=>this._description}></label>
-      <label>Description
-      <select>
-        <option></option>
-        <option></option>
-        <option></option>
-      </select>
-      ref={()=>this._section}></label>
-    */
+      <form  onSubmit={this._handleSubmit.bind(this)}>
+      <label>
+        Link
+        <input placeholder='Link' ref={(input)=>this._link=input} />
+      </label>
+
+      <label>
+        Description
+        <textarea placeholder='Description' ref={(textarea)=>this._description=textarea}>
+        </textarea>
+      </label>
+
+      <label>
+        Section
+        <select ref={(select)=>this._section = select }>
+          <option>A</option>
+          <option>B</option>
+          <option>C</option>
+          <option>D</option>
+          <option>E</option>
+        </select>
+      </label>
+      <button type='submit'>Post bookmark</button>
+      </form>
     );
   }
+
+  _handleSubmit(event){
+    event.preventDefault();
+
+    let section=this._section;
+    let description=this._description;
+    let link = this._link;
+    let created = new Date();
+    this._link='';
+    this._description='';
+    this._created='';
+    this.props.addBM(link.value,description.value,section.value,created.value);
+  }
+
 }
 
 
 class BMBox extends React.Component{
 
+  constructor(){
+    super();
+    this.state={
+      bookmarks:[
+        {id:'1', link:'facebook.github.io/react', description:'Some useful react docs', section:'FrontEnd', created:'28/06/2017 13:43'},
+        {id:'2', link:'https://angularjs.org/', description:'Angular official website', section:'FrontEnd', created:'28/06/2017 13:45'}
+      ]
+    };
+  }
 
   render() {
     const bookmarks = this._getBookmarks();
@@ -43,31 +76,27 @@ class BMBox extends React.Component{
       <div>
 
         <h3>This is the Bookmarks Box</h3>
-      //  <BMForm addBookmark={this._addBookmark.bind(this)}/>
+        <BMForm addBM={this._addBookmark.bind(this)}/>
         {bookmarks}
 
       </div>
     );
   }
 
-  _addBookmark(link, description, section){
+  _addBookmark(link, description, section, created){
     const bookmark = {
-      id: this.state.bookmarks.length + 1;
+      id: this.state.bookmarks.length + 1,
       link,
       description,
       section,
-      created: new Date();
+      created
     };
-    this.setState({ bookmarks: this.state.comments.concat([bookmark]) });
+    this.setState({ bookmarks: this.state.bookmarks.concat([bookmark]) });
   }
 
   _getBookmarks(){
-    const bookmarksList=[
-      {id:'1', link:'facebook.github.io/react', description:'Some useful react docs', section:'FrontEnd', created:'28/06/2017 13:43'},
-      {id:'2', link:'https://angularjs.org/', description:'Angular official website', section:'FrontEnd', created:'28/06/2017 13:45'}
-      ];
 
-    return bookmarksList.map((bm) => {
+    return this.state.bookmarks.map((bm) => {
       return (
         <BM
           link={bm.link}
